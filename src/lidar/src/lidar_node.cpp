@@ -5,6 +5,7 @@
 #include <float.h>
 #include <stdio.h>
 #include <math.h> 
+#include <sstream>
 
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_cloud.h>
@@ -26,6 +27,8 @@
 #define IMAGE_WIDTH	801
 #define BIN		0.1
 
+using namespace cv;
+
 // Global Publishers/Subscribers
 ros::Subscriber subPointCloud;
 ros::Publisher pubPointCloud;
@@ -35,12 +38,13 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_grid (new pcl::PointCloud<pcl::PointXY
 sensor_msgs::PointCloud2 output;
 
 cv::Mat *heightmap;
+vector<int> compression_params;
+
+int fnameCounter;
 
 // map meters to index
 // returns 0 if not in range, 1 if in range and row/column are set
 int map_pc2rc(double x, double y, int *row, int *column){
-  // Check if falls within range
-  //if(x > (IMAGE_HEIGHT * -0.5 * BIN) && x < (IMAGE_HEIGHT * 0.5 * BIN) && y > (IMAGE_WIDTH * -0.5 * BIN) && y < (IMAGE_WIDTH * 0.5 * BIN)){
     // Find x -> row mapping
     *row = (int)round(floor(((((IMAGE_HEIGHT*BIN)/2.0) - x)/(IMAGE_HEIGHT*BIN)) * IMAGE_HEIGHT));	// obviously can be simplified, but leaving for debug
 
@@ -49,9 +53,6 @@ int map_pc2rc(double x, double y, int *row, int *column){
 
     // Return success
     return 1;
-    //}
-
-  //return 0;
   }
 
 // map index to meters
@@ -87,12 +88,10 @@ double heightArray[IMAGE_HEIGHT][IMAGE_WIDTH];
 
   // Convert from ROS message to PCL point cloud
   pcl::fromROSMsg(*pointCloudMsg, *cloud);
-//ROS_ERROR("%d", (int)cloud->points.size());
 
   // Populate the DEM grid by looping through every point
   int row, column;
   for(size_t j = 0; j < cloud->points.size(); ++j){
-//ROS_ERROR("%f,%f,%f", cloud->points[j].x,cloud->points[j].y,cloud->points[j].z);
     // If the point is within the image size bounds
     if(map_pc2rc(cloud->points[j].x, cloud->points[j].y, &row, &column) == 1 && row >= 0 && row < IMAGE_HEIGHT && column >=0 && column < IMAGE_WIDTH){
       if(cloud->points[j].z > heightArray[row][column]){
@@ -132,6 +131,12 @@ double heightArray[IMAGE_HEIGHT][IMAGE_WIDTH];
   // Display iamge
   cv::imshow("Height Map", *heightmap);
 
+  // Save image to disk
+  char filename[100];
+  //snprintf(filename, 100, "/home/mac/Developer/ros-examples/src/lidar/src/image_%d.png", fnameCounter);
+  //cv::imwrite(filename, *heightmap, compression_params);
+  ++fnameCounter;
+
   // Output height map to point cloud for python node to parse to PNG
   pcl::toROSMsg(*cloud_grid, output);
   output.header.stamp = ros::Time::now();
@@ -158,6 +163,10 @@ int main(int argc, char** argv)
   cvStartWindowThread();
   cv::imshow("Height Map", *heightmap);
 
+  // Setup Image Output Parameters
+  fnameCounter = 0;
+  compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+  compression_params.push_back(9);
  
   // Setup indicies in point clouds
 /*
