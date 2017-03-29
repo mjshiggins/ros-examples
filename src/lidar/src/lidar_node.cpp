@@ -36,7 +36,7 @@ double heightArray[IMAGE_HEIGHT][IMAGE_WIDTH];
 // returns 0 if not in range, 1 if in range and row/column are set
 int map_pc2rc(double x, double y, int *row, int *column){
   // Check if falls within range
-  if(x > (IMAGE_WIDTH * -0.5 * 0.1) && x < (IMAGE_WIDTH * 0.5 * 0.1) && y > (IMAGE_HEIGHT * -0.5 * 0.1) && y < (IMAGE_HEIGHT * 0.5 * 0.1)){
+  if(x > (IMAGE_HEIGHT * -0.5 * BIN) && x < (IMAGE_HEIGHT * 0.5 * BIN) && y > (IMAGE_WIDTH * -0.5 * BIN) && y < (IMAGE_WIDTH * 0.5 * BIN)){
     // Find x -> row mapping
     *row = (int)round(floor(((((IMAGE_HEIGHT*BIN)/2.0) - x)/(IMAGE_HEIGHT*BIN)) * IMAGE_HEIGHT));	// obviously can be simplified, but leaving for debug
 
