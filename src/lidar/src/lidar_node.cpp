@@ -1,4 +1,5 @@
 // ROS Point Cloud DEM Generation
+// MacCallister Higgins
 
 #include <cmath>
 #include <vector>
@@ -37,10 +38,18 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
 pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_grid (new pcl::PointCloud<pcl::PointXYZ>);
 sensor_msgs::PointCloud2 output;
 
+double heightArray[IMAGE_HEIGHT][IMAGE_WIDTH];
+
 cv::Mat *heightmap;
 vector<int> compression_params;
 
 int fnameCounter;
+double lowest;
+
+// map meters to 0->255
+int map_m2i(double val){
+  return (int)round((val + 3.0)/6.0 * 255);
+  }
 
 // map meters to index
 // returns 0 if not in range, 1 if in range and row/column are set
@@ -77,9 +86,9 @@ int map_rc2pc(double *x, double *y, int row, int column){
 void DEM(const sensor_msgs::PointCloud2ConstPtr& pointCloudMsg)
 {
   ROS_DEBUG("Point Cloud Received");
-double heightArray[IMAGE_HEIGHT][IMAGE_WIDTH];
 
   // clear cloud and height map array
+  lowest = FLT_MAX;
   for(int i = 0; i < IMAGE_HEIGHT; ++i){ 
     for(int j = 0; j < IMAGE_WIDTH; ++j){ 
       heightArray[i][j] = (double)(-FLT_MAX);
@@ -96,7 +105,10 @@ double heightArray[IMAGE_HEIGHT][IMAGE_WIDTH];
     if(map_pc2rc(cloud->points[j].x, cloud->points[j].y, &row, &column) == 1 && row >= 0 && row < IMAGE_HEIGHT && column >=0 && column < IMAGE_WIDTH){
       if(cloud->points[j].z > heightArray[row][column]){
         heightArray[row][column] = cloud->points[j].z;
-
+        }
+      // Keep track of lowest point in cloud for flood fill
+      else if(cloud->points[j].z < lowest){
+        lowest = cloud->points[j].z;
         }
       }
     }
@@ -116,15 +128,14 @@ double heightArray[IMAGE_HEIGHT][IMAGE_WIDTH];
       // Add point to image
       cv::Vec3b &pixel = heightmap->at<cv::Vec3b>(i,j);
       if(heightArray[i][j] > -FLT_MAX){
-        int val = (int)round((heightArray[i][j] + 3.0)/6.0 * 255);
         pixel[0] = 0;
         pixel[1] = 0;
-        pixel[2] = val;
+        pixel[2] = map_m2i(heightArray[i][j]);
         }
       else{
         pixel[0] = 0;
         pixel[1] = 0;
-        pixel[2] = 0;
+        pixel[2] = 0;//map_m2i(lowest);
         }
       }
     }
@@ -165,6 +176,7 @@ int main(int argc, char** argv)
 
   // Setup Image Output Parameters
   fnameCounter = 0;
+  lowest = FLT_MAX;
   compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
   compression_params.push_back(9);
  
