@@ -91,22 +91,23 @@ void DEM(const sensor_msgs::PointCloud2ConstPtr& pointCloudMsg)
     // If the point is within the image size bounds
     if(map_pc2rc(cloud->points[j].x, cloud->points[j].y, &row, &column) == 1 && row >= 0 && row < IMAGE_HEIGHT && column >=0 && column < IMAGE_WIDTH){
       if(cloud->points[j].z > heightArray[row][column]){
-//ROS_ERROR("%d,%d", row,column);
         heightArray[row][column] = cloud->points[j].z;
-
         }
       }
     }
 
   // Create "point cloud" to be published for visualization and later python node PNG generation
   int index = 0;
+  double x, y;
   for(int i = 0; i < IMAGE_HEIGHT; ++i){ 
     for(int j = 0; j < IMAGE_WIDTH; ++j){ 
       // Add point
-      index = i * j;
-      //cloud_grid->points[index].x = (double)j;
-      //cloud_grid->points[index].y = (double)i;
+      //index = i * j;
+      (void)map_rc2pc(&x, &y, i, j);
+      cloud_grid->points[index].x = x;
+      cloud_grid->points[index].y = y;
       cloud_grid->points[index].z = heightArray[i][j];
+      ++index;
       }
     }
 
