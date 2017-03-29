@@ -36,7 +36,7 @@ double heightArray[IMAGE_HEIGHT][IMAGE_WIDTH];
 // returns 0 if not in range, 1 if in range and row/column are set
 int map_pc2rc(double x, double y, int *row, int *column){
   // Check if falls within range
-  if(x > (IMAGE_HEIGHT * -0.5 * BIN) && x < (IMAGE_HEIGHT * 0.5 * BIN) && y > (IMAGE_WIDTH * -0.5 * BIN) && y < (IMAGE_WIDTH * 0.5 * BIN)){
+  //if(x > (IMAGE_HEIGHT * -0.5 * BIN) && x < (IMAGE_HEIGHT * 0.5 * BIN) && y > (IMAGE_WIDTH * -0.5 * BIN) && y < (IMAGE_WIDTH * 0.5 * BIN)){
     // Find x -> row mapping
     *row = (int)round(floor(((((IMAGE_HEIGHT*BIN)/2.0) - x)/(IMAGE_HEIGHT*BIN)) * IMAGE_HEIGHT));	// obviously can be simplified, but leaving for debug
 
@@ -45,9 +45,9 @@ int map_pc2rc(double x, double y, int *row, int *column){
 
     // Return success
     return 1;
-    }
+    //}
 
-  return 0;
+  //return 0;
   }
 
 // map index to meters
@@ -89,7 +89,7 @@ void DEM(const sensor_msgs::PointCloud2ConstPtr& pointCloudMsg)
   for(size_t j = 0; j < cloud->points.size(); ++j){
 //ROS_ERROR("%f,%f,%f", cloud->points[j].x,cloud->points[j].y,cloud->points[j].z);
     // If the point is within the image size bounds
-    if(map_pc2rc(cloud->points[j].x, cloud->points[j].y, &row, &column) == 1){
+    if(map_pc2rc(cloud->points[j].x, cloud->points[j].y, &row, &column) == 1 && row >= 0 && row < IMAGE_HEIGHT && column >=0 && column < IMAGE_WIDTH){
       if(cloud->points[j].z > heightArray[row][column]){
 //ROS_ERROR("%d,%d", row,column);
         heightArray[row][column] = cloud->points[j].z;
