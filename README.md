@@ -1,3 +1,11 @@
+# height-map
+
+To use this node, first build. You'll need OpenCV dependencies, but that should be included in ROS. If you want to save the images, create a folder in the ROS root workspace (where this readme is located) called ```images```. Everything will automatically be saved there.
+
+To run: ```rosrun lidar lidar_node```
+
+You should see an image window pop up. The point cloud topic is hard coded in lidar_node.cpp. You may need to change that to ```/points_raw```. After this node is up, play your bag file.
+
 # ros-examples
 Want to learn how to use the Robot Operating System (ROS), the Point Cloud Library (PCL), and a bunch of other cool tools to make a self-driving car or other awesome robot? This repository is home to a collection of ROS nodes that process 3D sensor information, specifically as examples for the Udacity/Didi $100k object detection challenge. Learn about obstacle fusion techniques, and use these nodes as a starting point for building your own awesome obstacle detection engine!
 
