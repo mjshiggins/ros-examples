@@ -1,6 +1,6 @@
 # height-map
 <img src="images/image_53.png" alt="height map" width="400px">
-Currently, this ROS workspace processes LIDAR data to create PNG "bird's eye" height maps for use in deep learning applications. All of the real code currently resides in ```ros-examples/src/lidar/src/lidar_node.cpp```
+Currently, this ROS workspace processes LIDAR data to create PNG "bird's eye" height maps for use in deep learning applications. All of the real code currently resides in ```lidar_node.cpp```.
 
 To use this node, first build. You'll need OpenCV dependencies, but that should be included in ROS. If you want to save the images, create a folder in the ROS root workspace (where this readme is located) called ```images```. Everything will automatically be saved there.
 
