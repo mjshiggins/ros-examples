@@ -5,7 +5,7 @@
 #include <vector>
 #include <float.h>
 #include <stdio.h>
-#include <math.h> 
+#include <math.h>
 #include <sstream>
 
 #include <pcl_conversions/pcl_conversions.h>
@@ -19,6 +19,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
+#include <opencv2/highgui/highgui.hpp>
 
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -41,7 +42,7 @@ sensor_msgs::PointCloud2 output;
 double heightArray[IMAGE_HEIGHT][IMAGE_WIDTH];
 
 cv::Mat *heightmap;
-vector<int> compression_params;
+std::vector<int> compression_params;
 
 int fnameCounter;
 double lowest;
@@ -89,8 +90,8 @@ void DEM(const sensor_msgs::PointCloud2ConstPtr& pointCloudMsg)
 
   // clear cloud and height map array
   lowest = FLT_MAX;
-  for(int i = 0; i < IMAGE_HEIGHT; ++i){ 
-    for(int j = 0; j < IMAGE_WIDTH; ++j){ 
+  for(int i = 0; i < IMAGE_HEIGHT; ++i){
+    for(int j = 0; j < IMAGE_WIDTH; ++j){
       heightArray[i][j] = (double)(-FLT_MAX);
       }
     }
@@ -116,8 +117,8 @@ void DEM(const sensor_msgs::PointCloud2ConstPtr& pointCloudMsg)
   // Create "point cloud" and opencv image to be published for visualization
   int index = 0;
   double x, y;
-  for(int i = 0; i < IMAGE_HEIGHT; ++i){ 
-    for(int j = 0; j < IMAGE_WIDTH; ++j){ 
+  for(int i = 0; i < IMAGE_HEIGHT; ++i){
+    for(int j = 0; j < IMAGE_WIDTH; ++j){
       // Add point to cloud
       (void)map_rc2pc(&x, &y, i, j);
       cloud_grid->points[index].x = x;
@@ -179,7 +180,7 @@ int main(int argc, char** argv)
   lowest = FLT_MAX;
   compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
   compression_params.push_back(9);
- 
+
   // Setup indicies in point clouds
 /*
   int index = 0;
