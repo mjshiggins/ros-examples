@@ -145,7 +145,7 @@ void DEM(const sensor_msgs::PointCloud2ConstPtr& pointCloudMsg)
 
   // Save image to disk
   char filename[100];
-  snprintf(filename, 100, "images/image_%d.png", fnameCounter);
+  snprintf(filename, 100, "/tmp/images/image_%d.png", fnameCounter);
   cv::imwrite(filename, *heightmap, compression_params);
   ++fnameCounter;
 
