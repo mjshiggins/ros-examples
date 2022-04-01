@@ -17,9 +17,10 @@
 #include <pcl/io/pcd_io.h>
 
 #include <cv_bridge/cv_bridge.h>
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/highgui/highgui_c.h>
 
 #include <ros/ros.h>
 #include <ros/console.h>
@@ -171,14 +172,14 @@ int main(int argc, char** argv)
   // Setup image
   cv::Mat map(IMAGE_HEIGHT, IMAGE_WIDTH, CV_8UC3, cv::Scalar(0, 0, 0));
   heightmap = &map;
-  cvNamedWindow("Height Map", CV_WINDOW_AUTOSIZE);
+  cvNamedWindow("Height Map", WINDOW_AUTOSIZE);
   cvStartWindowThread();
   cv::imshow("Height Map", *heightmap);
 
   // Setup Image Output Parameters
   fnameCounter = 0;
   lowest = FLT_MAX;
-  compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+  compression_params.push_back(IMWRITE_PNG_COMPRESSION);
   compression_params.push_back(9);
 
   // Setup indicies in point clouds
