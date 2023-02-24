@@ -1,4 +1,4 @@
-# height-map
+# BEV images generator
 <img src="images/image_53.png" alt="height map" width="400px"></img>
 
 Currently, this ROS workspace processes LIDAR data to create PNG "bird's eye" height maps for use in deep learning applications. All of the real code currently resides in ```/ros-examples/src/lidar/src/lidar_node.cpp```.
@@ -8,6 +8,9 @@ To use this node, first build. You'll need OpenCV dependencies, but that should 
 To run: ```rosrun lidar lidar_node```
 
 You should see an image window pop up. The point cloud topic is hard coded in lidar_node.cpp. You may need to change that to ```/points_raw```. After this node is up, play your bag file.
+
+## Brief overview
+This repository is based on the original one by MacAllister Higgins (https://github.com/mjshiggins/ros-examples) ,but provides HSR colorization of the PointCloud or code the encoding with height, density and intensity (Colour visualisation corresponds to the LiDAR values)
 
 # ros-examples
 Want to learn how to use the Robot Operating System (ROS), the Point Cloud Library (PCL), and a bunch of other cool tools to make a self-driving car or other awesome robot? This repository is home to a collection of ROS nodes that process 3D sensor information, specifically as examples for the Udacity/Didi $100k object detection challenge. Learn about obstacle fusion techniques, and use these nodes as a starting point for building your own awesome obstacle detection engine!
